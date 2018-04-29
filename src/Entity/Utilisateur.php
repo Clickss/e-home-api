@@ -39,7 +39,7 @@ class Utilisateur
     private $mdp;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Maison", mappedBy="Utilisateur", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Maison", mappedBy="utilisateur", orphanRemoval=true)
      */
     private $maisons;
 
