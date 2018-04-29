@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Maison;
+use App\Form\MaisonType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+/**
+ * @Route("/api")
+ */
 class MaisonController extends Controller
 {
     /**
@@ -36,16 +40,50 @@ class MaisonController extends Controller
     }
 
     /**
+     * @Route("/maisons/{id}", name="maison_edit")
+     * @Method({"PUT"})
+     */
+    public function editAction(Request $request)
+    {
+        $maison = $this->getDoctrine()->getManager()->getRepository(Maison::class)->find($request->get('id'));
+
+        if (!$maison) {
+            throw $this->createNotFoundException(
+                $response = new Response('', Response::HTTP_NOT_FOUND)
+            );
+        }
+
+        $data = $this->get('jms_serializer')->deserialize($request->getContent(), Maison::class, 'json');
+
+        $form = $this->createForm(MaisonType::class, $maison);
+        $form->submit(array(
+            "nom" => $data->getNom(),
+            "etages" => $data->getEtages()
+        ));
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            return new Response(null, Response::HTTP_OK);
+        } else {
+            return new Response(null, Response::HTTP_NOT_MODIFIED);
+        }
+
+
+    }
+
+    /**
      * @Route("/maisons", name="maison_add")
-     * @Method({"POST"})
+     * @Method({"PUT"})
      */
     public function addAction(Request $request)
     {
         $data = $request->getContent();
-        $article = $this->get('jms_serializer')->deserialize($data, Maison::class, 'json');
+        $maison = $this->get('jms_serializer')->deserialize($data, Maison::class, 'json');
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($article);
+        $em->persist($maison);
         $em->flush();
 
         return new Response('', Response::HTTP_CREATED);
