@@ -28,6 +28,12 @@ class Maison
      */
     private $etages;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="maisons")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $utilisateur;
+
     public function __construct()
     {
         $this->etages = new ArrayCollection();
@@ -46,6 +52,18 @@ class Maison
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Maison
+    {
+        return $this->maison;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
