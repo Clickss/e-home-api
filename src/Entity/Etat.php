@@ -29,13 +29,18 @@ class Etat
     private $lib_etat_non;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="boolean")
      */
     private $val_slider;
-    
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\AttributObjet", mappedBy="etat")
+     */
+    private $attributObjets;
+
     public function __construct()
     {
-        
+        $this->attributObjets = new ArrayCollection();
     }
 
     public function getId()
@@ -43,38 +48,69 @@ class Etat
         return $this->id;
     }
 
-    public function getLib_etat_oui(): ?string
+    public function getLibEtatOui(): ?string
     {
-        return $this->nom;
+        return $this->lib_etat_oui;
     }
 
-    public function setLib_etat_oui(string $lib_etat_oui): self
+    public function setLibEtatOui(string $lib_etat_oui): self
     {
         $this->lib_etat_oui = $lib_etat_oui;
 
         return $this;
     }
 
-    public function getLib_etat_non(): ?string
+    public function getLibEtatNon(): ?string
     {
         return $this->lib_etat_non;
     }
 
-    public function setLib_etat_non(string $lib_etat_non): self
+    public function setLibEtatNon(string $lib_etat_non): self
     {
         $this->lib_etat_non = $lib_etat_non;
 
         return $this;
     }
 
-    public function getVal_slider(): ?string
+    public function getValSlider(): ?bool
     {
         return $this->val_slider;
     }
 
-    public function setVal_slider(string $val_slider): self
+    public function setValSlider(bool $val_slider): self
     {
         $this->val_slider = $val_slider;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|AttributObjet[]
+     */
+    public function getAttributObjets(): Collection
+    {
+        return $this->attributObjets;
+    }
+
+    public function addAttributObjet(AttributObjet $attributObjet): self
+    {
+        if (!$this->attributObjets->contains($attributObjet)) {
+            $this->attributObjets[] = $attributObjet;
+            $attributObjet->setEtat($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttributObjet(AttributObjet $attributObjet): self
+    {
+        if ($this->attributObjets->contains($attributObjet)) {
+            $this->attributObjets->removeElement($attributObjet);
+            // set the owning side to null (unless already changed)
+            if ($attributObjet->getEtat() === $this) {
+                $attributObjet->setEtat(null);
+            }
+        }
 
         return $this;
     }

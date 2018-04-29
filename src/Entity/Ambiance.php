@@ -27,11 +27,16 @@ class Ambiance
      * @ORM\ManyToOne(targetEntity="App\Entity\Piece", inversedBy="ambiances")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $pieces;
+    private $piece;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\ObjetPiece", mappedBy="ambiances")
+     */
+    private $objetPieces;
 
     public function __construct()
     {
-        
+        $this->objetPieces = new ArrayCollection();
     }
 
     public function getId()
@@ -59,6 +64,34 @@ class Ambiance
     public function setPiece(?Piece $piece): self
     {
         $this->piece = $piece;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ObjetPiece[]
+     */
+    public function getObjetPieces(): Collection
+    {
+        return $this->objetPieces;
+    }
+
+    public function addObjetPiece(ObjetPiece $objetPiece): self
+    {
+        if (!$this->objetPieces->contains($objetPiece)) {
+            $this->objetPieces[] = $objetPiece;
+            $objetPiece->addAmbiance($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjetPiece(ObjetPiece $objetPiece): self
+    {
+        if ($this->objetPieces->contains($objetPiece)) {
+            $this->objetPieces->removeElement($objetPiece);
+            $objetPiece->removeAmbiance($this);
+        }
 
         return $this;
     }

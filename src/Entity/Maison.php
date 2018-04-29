@@ -34,6 +34,7 @@ class Maison
      */
     private $utilisateur;
 
+
     public function __construct()
     {
         $this->etages = new ArrayCollection();
@@ -52,18 +53,6 @@ class Maison
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getUtilisateur(): ?Maison
-    {
-        return $this->maison;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
 
         return $this;
     }
@@ -95,6 +84,18 @@ class Maison
                 $etage->setMaison(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

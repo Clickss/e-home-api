@@ -112,7 +112,7 @@ class Utilisateur
     public function addMaison(Maison $maison): self
     {
         if (!$this->maisons->contains($maison)) {
-            $this->maison[] = $maison;
+            $this->maisons[] = $maison;
             $maison->setUtilisateur($this);
         }
 
