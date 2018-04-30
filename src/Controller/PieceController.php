@@ -1,62 +1,80 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: vincentpochon
+ * Date: 30/04/2018
+ * Time: 20:59
+ */
 
 namespace App\Controller;
 
+
+use App\Entity\Etage;
 use App\Entity\Maison;
+use App\Entity\Piece;
 use App\Entity\Utilisateur;
-use App\Form\MaisonType;
+use App\Form\EtageType;
+use App\Form\PieceType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * @Route("/api/utilisateurs/{id_u}/maisons")
+ * @Route("/api/utilisateurs/{id_u}/maisons/{id_m}/etages/{id_e}/pieces")
  */
-class MaisonController extends Controller
+class PieceController extends Controller
 {
     /**
-     * @Route("", name="maison_add")
+     * @Route("", name="piece_add")
      * @Method({"PUT"})
      */
     public function addAction(Request $request)
     {
         $data = $request->getContent();
-        $maison = $this->get('jms_serializer')->deserialize($data, Maison::class, 'json');
+        $piece = $this->get('jms_serializer')->deserialize($data, Piece::class, 'json');
 
         $utilisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->find($request->get('id_u'));
+        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id_m'));
+        $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id_e'));
+
         $maison->setUtilisateur($utilisateur);
+        $etage->setMaison($maison);
+        $piece->setEtage($etage);
 
         $em = $this->getDoctrine()->getManager();
-        $em->persist($maison);
+        $em->persist($piece);
         $em->flush();
 
         return new Response('', Response::HTTP_CREATED);
     }
 
     /**
-     * @Route("/{id}", name="maison_show")
+     * @Route("/{id}", name="piece_show")
      * @Method({"GET"})
      */
     public function showAction(Request $request)
     {
         $utilisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->find($request->get('id_u'));
-        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id'));
+        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id_m'));
+        $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id_e'));
+        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id'));
 
-        if (!$maison) {
+        if (!$piece) {
             throw $this->createNotFoundException(
                 $response = new Response('', Response::HTTP_NOT_FOUND)
             );
         }
         else {
-            if($utilisateur != $maison->getUtilisateur()){
+            if($etage != $piece->getEtage() || $maison != $piece->getEtage()->getMaison() || $utilisateur != $piece->getEtage()->getMaison()->getUtilisateur())
+            {
                 throw $this->createNotFoundException(
                     $response = new Response('', Response::HTTP_NOT_FOUND)
                 );
             }
             else {
-                $data = $this->get('jms_serializer')->serialize($maison, 'json');
+                $data = $this->get('jms_serializer')->serialize($piece, 'json');
 
                 $response = new Response($data);
                 $response->headers->set('Content-Type', 'application/json');
@@ -69,22 +87,22 @@ class MaisonController extends Controller
     }
 
     /**
-     * @Route("/{id}", name="maison_edit")
+     * @Route("/{id}", name="piece_edit")
      * @Method({"PUT"})
      */
     public function editAction(Request $request)
     {
-        $maison = $this->getDoctrine()->getManager()->getRepository(Maison::class)->find($request->get('id'));
+        $piece = $this->getDoctrine()->getManager()->getRepository(Piece::class)->find($request->get('id'));
 
-        if (!$maison) {
+        if (!$piece) {
             throw $this->createNotFoundException(
                 $response = new Response('', Response::HTTP_NOT_FOUND)
             );
         }
 
-        $data = $this->get('jms_serializer')->deserialize($request->getContent(), Maison::class, 'json');
+        $data = $this->get('jms_serializer')->deserialize($request->getContent(), Piece::class, 'json');
 
-        $form = $this->createForm(MaisonType::class, $maison);
+        $form = $this->createForm(PieceType::class, $piece);
         $form->submit(array(
             "nom" => $data->getNom()
         ));
@@ -102,22 +120,22 @@ class MaisonController extends Controller
     }
 
     /**
-     * @Route("/{id}", name="maison_delete")
+     * @Route("/{id}", name="piece_delete")
      * @Method({"DELETE"})
      */
     public function deleteAction($id)
     {
-        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($id);
+        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($id);
 
-        if (!$maison) {
+        if (!$piece) {
             throw $this->createNotFoundException(sprintf(
-                'Maison inconnue'
+                'Piece inconnue'
             ));
         }
         else
         {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($maison);
+            $em->remove($piece);
             $em->flush();
         }
 
@@ -125,14 +143,14 @@ class MaisonController extends Controller
     }
 
     /**
-     * @Route("", name="maison_list")
+     * @Route("", name="piece_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
-        $maisons = $this->getDoctrine()->getRepository("App:Maison")->findBy(["utilisateur" => $request->get('id_u')]);
+        $pieces = $this->getDoctrine()->getRepository("App:Piece")->findBy(["etage" => $request->get('id_e')]);
 
-        $data = $this->get('jms_serializer')->serialize($maisons, 'json');
+        $data = $this->get('jms_serializer')->serialize($pieces, 'json');
 
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
