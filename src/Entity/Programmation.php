@@ -2,8 +2,6 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -29,20 +27,16 @@ class Programmation
     private $jour;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Objet", inversedBy="programmations")
+     * @ORM\ManyToOne(targetEntity="App\Entity\ObjetPiece", inversedBy="programmations")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $objet;
+    private $objet_piece;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Programmation", mappedBy="attribut_objet", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity="App\Entity\AttributObjet", inversedBy="programmations")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $attribut_Objet;
-
-    public function __construct()
-    {
-        $this->attribut_objet = new ArrayCollection();
-    }
+    private $attribut_objet;
 
     public function getId()
     {
@@ -61,26 +55,38 @@ class Programmation
         return $this;
     }
 
-    public function getJour(): ?Jour
+    public function getJour(): ?string
     {
         return $this->jour;
     }
 
-    public function setJour(?Jour $jour): self
+    public function setJour(string $jour): self
     {
         $this->jour = $jour;
 
         return $this;
     }
 
-    public function getAttribut_Objet(): ?Attribut_Objet
+    public function getObjetPiece(): ?ObjetPiece
     {
-        return $this->attribut_Objet;
+        return $this->objet_piece;
     }
 
-    public function setAttribut_Objet(?Attribut_Objet $attribut_Objet): self
+    public function setObjetPiece(?ObjetPiece $objet_piece): self
     {
-        $this->attribut_Objet = $attribut_Objet;
+        $this->objet_piece = $objet_piece;
+
+        return $this;
+    }
+
+    public function getAttributObjet(): ?AttributObjet
+    {
+        return $this->attribut_objet;
+    }
+
+    public function setAttributObjet(?AttributObjet $attribut_objet): self
+    {
+        $this->attribut_objet = $attribut_objet;
 
         return $this;
     }

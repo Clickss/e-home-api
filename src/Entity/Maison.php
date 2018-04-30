@@ -5,9 +5,13 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\MaisonRepository")
+ *
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class Maison
 {
@@ -15,11 +19,15 @@ class Maison
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose
      */
     private $nom;
 
@@ -33,6 +41,7 @@ class Maison
      * @ORM\JoinColumn(nullable=false)
      */
     private $utilisateur;
+
 
     public function __construct()
     {
@@ -52,18 +61,6 @@ class Maison
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
-        return $this;
-    }
-
-    public function getUtilisateur(): ?Maison
-    {
-        return $this->maison;
-    }
-
-    public function setUtilisateur(?Utilisateur $utilisateur): self
-    {
-        $this->utilisateur = $utilisateur;
 
         return $this;
     }
@@ -95,6 +92,18 @@ class Maison
                 $etage->setMaison(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUtilisateur(): ?Utilisateur
+    {
+        return $this->utilisateur;
+    }
+
+    public function setUtilisateur(?Utilisateur $utilisateur): self
+    {
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

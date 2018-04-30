@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\Attribut_ObjetRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\AttributObjetRepository")
  */
-class Attribut_Objet
+class AttributObjet
 {
     /**
      * @ORM\Id()
@@ -19,21 +19,19 @@ class Attribut_Objet
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Slider", inversedBy="attribbut_objets")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\Column(type="string", length=255)
+     */
+    private $couleur;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Slider", inversedBy="attributObjets")
      */
     private $slider;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Etat", inversedBy="attribut_objets")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\ManyToOne(targetEntity="App\Entity\Etat", inversedBy="attributObjets")
      */
     private $etat;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $couleur;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Objet", mappedBy="attribut_objet", orphanRemoval=true)
@@ -47,12 +45,25 @@ class Attribut_Objet
 
     public function __construct()
     {
-        
+        $this->objets = new ArrayCollection();
+        $this->programmations = new ArrayCollection();
     }
 
     public function getId()
     {
         return $this->id;
+    }
+
+    public function getCouleur(): ?string
+    {
+        return $this->couleur;
+    }
+
+    public function setCouleur(string $couleur): self
+    {
+        $this->couleur = $couleur;
+
+        return $this;
     }
 
     public function getSlider(): ?Slider
@@ -79,18 +90,6 @@ class Attribut_Objet
         return $this;
     }
 
-    public function getCouleur(): ?Couleur
-    {
-        return $this->couleur;
-    }
-
-    public function setCouleur(?Couleur $couleur): self
-    {
-        $this->couleur = $couleur;
-
-        return $this;
-    }
-
     /**
      * @return Collection|Objet[]
      */
@@ -103,19 +102,19 @@ class Attribut_Objet
     {
         if (!$this->objets->contains($objet)) {
             $this->objets[] = $objet;
-            $piece->setAttribut_Objet($this);
+            $objet->setAttributObjet($this);
         }
 
         return $this;
     }
 
-    public function removeObjet(Piece $objet): self
+    public function removeObjet(Objet $objet): self
     {
         if ($this->objets->contains($objet)) {
             $this->objets->removeElement($objet);
             // set the owning side to null (unless already changed)
-            if ($piece->getAtribut_Objet() === $this) {
-                $piece->setAttribut_Objet(null);
+            if ($objet->getAttributObjet() === $this) {
+                $objet->setAttributObjet(null);
             }
         }
 
@@ -134,7 +133,7 @@ class Attribut_Objet
     {
         if (!$this->programmations->contains($programmation)) {
             $this->programmations[] = $programmation;
-            $piece->setAtribut_Objet($this);
+            $programmation->setAttributObjet($this);
         }
 
         return $this;
@@ -145,8 +144,8 @@ class Attribut_Objet
         if ($this->programmations->contains($programmation)) {
             $this->programmations->removeElement($programmation);
             // set the owning side to null (unless already changed)
-            if ($piece->getAtribut_Objet() === $this) {
-                $piece->setAtribut_Objet(null);
+            if ($programmation->getAttributObjet() === $this) {
+                $programmation->setAttributObjet(null);
             }
         }
 

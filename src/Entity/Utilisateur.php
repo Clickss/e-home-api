@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UtilisateurRepository")
+ *
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class Utilisateur
 {
@@ -15,26 +18,36 @@ class Utilisateur
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     *
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose
      */
     private $mail;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Serializer\Expose
      */
     private $mdp;
 
@@ -112,7 +125,7 @@ class Utilisateur
     public function addMaison(Maison $maison): self
     {
         if (!$this->maisons->contains($maison)) {
-            $this->maison[] = $maison;
+            $this->maisons[] = $maison;
             $maison->setUtilisateur($this);
         }
 

@@ -29,19 +29,19 @@ class Objet
     private $image;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Piece", inversedBy="objets")
+     * @ORM\ManyToOne(targetEntity="App\Entity\AttributObjet", inversedBy="objets")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $piece;
+    private $attribut_objet;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Objet", mappedBy="attribut_objet", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\ObjetPiece", mappedBy="objet", orphanRemoval=true)
      */
-    private $attribut_Objet;
+    private $objetPieces;
 
     public function __construct()
     {
-        $this->attribut_objet = new ArrayCollection();
+        $this->objetPieces = new ArrayCollection();
     }
 
     public function getId()
@@ -61,26 +61,57 @@ class Objet
         return $this;
     }
 
-    public function getPiece(): ?Piece
+    public function getImage(): ?string
     {
-        return $this->piece;
+        return $this->image;
     }
 
-    public function setPiece(?Piece $piece): self
+    public function setImage(string $image): self
     {
-        $this->piece = $piece;
+        $this->image = $image;
 
         return $this;
     }
 
-    public function getAttribut_Objet(): ?Attribut_Objet
+    public function getAttributObjet(): ?AttributObjet
     {
-        return $this->attribut_Objet;
+        return $this->attribut_objet;
     }
 
-    public function setAttribut_Objet(?Attribut_Objet $attribut_Objet): self
+    public function setAttributObjet(?AttributObjet $attribut_objet): self
     {
-        $this->attribut_Objet = $attribut_Objet;
+        $this->attribut_objet = $attribut_objet;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|ObjetPiece[]
+     */
+    public function getObjetPieces(): Collection
+    {
+        return $this->objetPieces;
+    }
+
+    public function addObjetPiece(ObjetPiece $objetPiece): self
+    {
+        if (!$this->objetPieces->contains($objetPiece)) {
+            $this->objetPieces[] = $objetPiece;
+            $objetPiece->setObjet($this);
+        }
+
+        return $this;
+    }
+
+    public function removeObjetPiece(ObjetPiece $objetPiece): self
+    {
+        if ($this->objetPieces->contains($objetPiece)) {
+            $this->objetPieces->removeElement($objetPiece);
+            // set the owning side to null (unless already changed)
+            if ($objetPiece->getObjet() === $this) {
+                $objetPiece->setObjet(null);
+            }
+        }
 
         return $this;
     }
