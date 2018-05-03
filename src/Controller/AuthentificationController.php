@@ -18,6 +18,19 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
  * @Route("/api/auth")
  */
 class AuthentificationController extends Controller {
+
+    /**
+     * @Route("", name="authentification2")
+     * @Method({"OPTIONS"})
+     */
+    public function authentificatioAction(Request $request)
+    {
+        $response = new Response(json_encode("llt"), Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
+    }
     
     /**
      * @Route("", name="authentification")
@@ -25,9 +38,8 @@ class AuthentificationController extends Controller {
      */
     public function authentificationAction(Request $request)
     {
-        var_dump($request->getContent());
-        $response = new Response('', Response::HTTP_CREATED);
-        $response->headers->set('Content-Type', 'application/json');
+        $response = new Response(json_encode("lol"), Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
