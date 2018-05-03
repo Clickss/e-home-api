@@ -25,7 +25,11 @@ class AuthentificationController extends Controller {
      */
     public function authentificationAction(Request $request)
     {
-        var_dump($request);
-        return 1;
+        var_dump($request->getContent());
+        $response = new Response('', Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
     }
 }
