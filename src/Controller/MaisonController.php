@@ -17,6 +17,20 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class MaisonController extends Controller
 {
     /**
+     * @Route("", name="options_maison")
+     * @Method({"OPTIONS"})
+     */
+    public function optionsAction(Request $request)
+    {
+        $response = new Response(json_encode("Ok"), Response::HTTP_OK);
+        
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
+    }
+    
+    /**
      * @Route("", name="maison_add")
      * @Method({"PUT"})
      */

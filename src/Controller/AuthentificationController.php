@@ -14,18 +14,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
+use App\Entity\Utilisateur;
+
 /**
  * @Route("/api/auth")
  */
 class AuthentificationController extends Controller {
 
     /**
-     * @Route("", name="authentification2")
+     * @Route("", name="options_auth")
      * @Method({"OPTIONS"})
      */
-    public function authentificatioAction(Request $request)
+    public function optionsAction(Request $request)
     {
-        $response = new Response(json_encode("llt"), Response::HTTP_CREATED);
+        $response = new Response(json_encode("Ok"), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
@@ -38,10 +40,30 @@ class AuthentificationController extends Controller {
      */
     public function authentificationAction(Request $request)
     {
-        $response = new Response(json_encode("lol"), Response::HTTP_CREATED);
+        $data = $this->get('jms_serializer')->deserialize($request->getContent(), Utilisateur::class, 'json');
+        $utilisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->findBy(['mail' => $data->getMail(), 'mdp' => $data->getMdp()]);
+        
+        if(count($utilisateur) != 0)
+        {
+            $retour = array(
+                "id" => $utilisateur[0]->getId(),
+                "nom" => $utilisateur[0]->getNom(),
+                "prenom" => $utilisateur[0]->getPrenom(),
+                "mail" => $utilisateur[0]->getMail(),
+                "mdp" => $utilisateur[0]->getMdp(),
+                "token" => "token",
+            );
+        }
+        else
+        {
+            $retour = false;
+        }
+        
+        $response = new Response(json_encode($retour), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
+        
         return $response;
     }
 }

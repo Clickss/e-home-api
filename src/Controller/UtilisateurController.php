@@ -18,6 +18,22 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 class UtilisateurController extends Controller
 {
     /**
+     * @Route("", name="options_utilisateur")
+     * @Route("/{id}", name="optionsid_utilisateur")
+     * @Method({"OPTIONS"})
+     */
+    public function optionsAction(Request $request)
+    {
+        $response = new Response(json_encode("Ok"), Response::HTTP_OK);
+        
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
+    }
+    
+    
+    /**
      * @Route("", name="utilisateur_add")
      * @Method({"PUT"})
      */
