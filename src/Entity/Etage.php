@@ -1,13 +1,9 @@
 <?php
-
 namespace App\Entity;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation as Serializer;
-
-
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EtageRepository")
  *
@@ -23,59 +19,47 @@ class Etage
      * @Serializer\Expose
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      *
      * @Serializer\Expose
      */
     private $nom;
-
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Maison", inversedBy="etages")
      * @ORM\JoinColumn(nullable=false)
      */
     private $maison;
-
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Piece", mappedBy="etage", orphanRemoval=true)
      */
     private $pieces;
-
     public function __construct()
     {
         $this->pieces = new ArrayCollection();
     }
-
     public function getId()
     {
         return $this->id;
     }
-
     public function getNom(): ?string
     {
         return $this->nom;
     }
-
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
         return $this;
     }
-
     public function getMaison(): ?Maison
     {
         return $this->maison;
     }
-
     public function setMaison(?Maison $maison): self
     {
         $this->maison = $maison;
-
         return $this;
     }
-
     /**
      * @return Collection|Piece[]
      */
@@ -83,17 +67,14 @@ class Etage
     {
         return $this->pieces;
     }
-
     public function addPiece(Piece $piece): self
     {
         if (!$this->pieces->contains($piece)) {
             $this->pieces[] = $piece;
             $piece->setEtage($this);
         }
-
         return $this;
     }
-
     public function removePiece(Piece $piece): self
     {
         if ($this->pieces->contains($piece)) {
@@ -103,7 +84,6 @@ class Etage
                 $piece->setEtage(null);
             }
         }
-
         return $this;
     }
 }
