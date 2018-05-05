@@ -26,6 +26,12 @@ class Maison
      */
     private $nom;
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="maisons")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $utilisateur;
+
+    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Etage", mappedBy="maison", orphanRemoval=true)
      */
     private $etages;

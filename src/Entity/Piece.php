@@ -19,25 +19,21 @@ class Piece
      * @Serializer\Expose
      */
     private $id;
-    
     /**
      * @ORM\Column(type="string", length=255)
      *
      * @Serializer\Expose
      */
     private $nom;
-    
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Etage", inversedBy="pieces")
      * @ORM\JoinColumn(nullable=false)
      */
     private $etage;
-    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Ambiance", mappedBy="piece", orphanRemoval=true)
      */
     private $ambiances;
-    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\ObjetPiece", mappedBy="piece", orphanRemoval=true)
      */
@@ -122,4 +118,3 @@ class Piece
         return $this;
     }
 }
-?>
