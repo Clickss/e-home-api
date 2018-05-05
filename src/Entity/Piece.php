@@ -52,6 +52,16 @@ class Piece
         $this->objetPieces = new ArrayCollection();
     }
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Objet", mappedBy="piece", orphanRemoval=true)
+     */
+    private $objets;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Ambiance", mappedBy="piece", orphanRemoval=true)
+     */
+    private $ambiance;
+
     public function getId()
     {
         return $this->id;

@@ -1,11 +1,8 @@
 <?php
-
 namespace App\Entity;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ObjetRepository")
  */
@@ -17,74 +14,58 @@ class Objet
      * @ORM\Column(type="integer")
      */
     private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $nom;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
     private $image;
-
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AttributObjet", inversedBy="objets")
      * @ORM\JoinColumn(nullable=false)
      */
     private $attribut_objet;
-
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\ObjetPiece", mappedBy="objet", orphanRemoval=true)
      */
     private $objetPieces;
-
     public function __construct()
     {
         $this->objetPieces = new ArrayCollection();
     }
-
     public function getId()
     {
         return $this->id;
     }
-
     public function getNom(): ?string
     {
         return $this->nom;
     }
-
     public function setNom(string $nom): self
     {
         $this->nom = $nom;
-
         return $this;
     }
-
     public function getImage(): ?string
     {
         return $this->image;
     }
-
     public function setImage(string $image): self
     {
         $this->image = $image;
-
         return $this;
     }
-
     public function getAttributObjet(): ?AttributObjet
     {
         return $this->attribut_objet;
     }
-
     public function setAttributObjet(?AttributObjet $attribut_objet): self
     {
         $this->attribut_objet = $attribut_objet;
-
         return $this;
     }
-
     /**
      * @return Collection|ObjetPiece[]
      */
@@ -92,17 +73,14 @@ class Objet
     {
         return $this->objetPieces;
     }
-
     public function addObjetPiece(ObjetPiece $objetPiece): self
     {
         if (!$this->objetPieces->contains($objetPiece)) {
             $this->objetPieces[] = $objetPiece;
             $objetPiece->setObjet($this);
         }
-
         return $this;
     }
-
     public function removeObjetPiece(ObjetPiece $objetPiece): self
     {
         if ($this->objetPieces->contains($objetPiece)) {
@@ -112,7 +90,6 @@ class Objet
                 $objetPiece->setObjet(null);
             }
         }
-
         return $this;
     }
 }
