@@ -58,7 +58,7 @@ class AuthentificationController extends Controller {
         {
             $retour = false;
         }
-        
+
         $response = new Response(json_encode($retour), Response::HTTP_OK);
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');

@@ -35,11 +35,7 @@ class Maison
      * @ORM\OneToMany(targetEntity="App\Entity\Etage", mappedBy="maison", orphanRemoval=true)
      */
     private $etages;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Utilisateur", inversedBy="maisons")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $utilisateur;
+
     public function __construct()
     {
         $this->etages = new ArrayCollection();

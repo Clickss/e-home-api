@@ -18,6 +18,7 @@ class MaisonController extends Controller
 {
     /**
      * @Route("", name="options_maison")
+     * @Route("/{id}", name="optionsid_maison")
      * @Method({"OPTIONS"})
      */
     public function optionsAction(Request $request)
