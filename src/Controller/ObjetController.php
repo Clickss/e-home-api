@@ -79,7 +79,7 @@ class ObjetController extends Controller
 
         $objets = array();
         foreach ($objetPieces as $objetPiece) {
-            array_push($objets, $objetPiece->getObjet());
+            array_push($objets, $objetPiece);
         }
 
         $data = $this->get('jms_serializer')->serialize($objets, 'json');
