@@ -115,6 +115,29 @@ class ObjetPieceController extends Controller
 
         return $response;
     }
+    
+    /**
+     * @Route("/{id}", name="objetpiece_delete")
+     * @Method({"DELETE"})
+     */
+    public function deleteAction($id)
+    {
+        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($id);
+        
+        if (!$objetpiece) {
+            throw $this->createNotFoundException(sprintf(
+                'Piece inconnue'
+            ));
+        }
+        else
+        {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($objetpiece);
+            $em->flush();
+        }
+
+        return new Response(null, Response::HTTP_OK);
+    }
 
     /**
      * @Route("", name="objetpiece_list")
