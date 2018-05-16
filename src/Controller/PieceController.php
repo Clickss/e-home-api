@@ -43,7 +43,7 @@ class PieceController extends Controller
     
     /**
      * @Route("", name="piece_add")
-     * @Method({"PUT"})
+     * @Method({"POST"})
      */
     public function addAction(Request $request)
     {

@@ -40,7 +40,7 @@ class EtageController extends Controller
     
     /**
      * @Route("", name="etage_add")
-     * @Method({"PUT"})
+     * @Method({"POST"})
      */
     public function addAction(Request $request)
     {
