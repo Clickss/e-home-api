@@ -22,10 +22,7 @@ class Etat
      * @ORM\Column(type="string", length=255)
      */
     private $lib_etat_non;
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $val_slider;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\AttributObjet", mappedBy="etat")
      */
@@ -54,15 +51,6 @@ class Etat
     public function setLibEtatNon(string $lib_etat_non): self
     {
         $this->lib_etat_non = $lib_etat_non;
-        return $this;
-    }
-    public function getValSlider(): ?bool
-    {
-        return $this->val_slider;
-    }
-    public function setValSlider(bool $val_slider): self
-    {
-        $this->val_slider = $val_slider;
         return $this;
     }
     /**

@@ -47,6 +47,13 @@ class ObjetPiece
      */
     private $programmations;
 
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\ValeursObjet", mappedBy="objetpiece", cascade={"persist", "remove"})
+     *
+     * @Serializer\Expose
+     */
+    private $valeursObjet;
+
     public function __construct()
     {
         $this->ambiances = new ArrayCollection();
@@ -134,6 +141,24 @@ class ObjetPiece
             if ($programmation->getObjetPiece() === $this) {
                 $programmation->setObjetPiece(null);
             }
+        }
+
+        return $this;
+    }
+
+    public function getValeursObjet(): ?ValeursObjet
+    {
+        return $this->valeursObjet;
+    }
+
+    public function setValeursObjet(?ValeursObjet $valeursObjet): self
+    {
+        $this->valeursObjet = $valeursObjet;
+
+        // set (or unset) the owning side of the relation if necessary
+        $newObjetpiece = $valeursObjet === null ? null : $this;
+        if ($newObjetpiece !== $valeursObjet->getObjetpiece()) {
+            $valeursObjet->setObjetpiece($newObjetpiece);
         }
 
         return $this;

@@ -30,14 +30,7 @@ class Slider
      * @ORM\Column(type="string", length=10)
      */
     private $unite_slider;
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $val_min_slider;
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $val_max_slider;
+
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\AttributObjet", mappedBy="slider")
      */
@@ -84,24 +77,6 @@ class Slider
     public function setUniteSlider(string $unite_slider): self
     {
         $this->unite_slider = $unite_slider;
-        return $this;
-    }
-    public function getValMinSlider(): ?int
-    {
-        return $this->val_min_slider;
-    }
-    public function setValMinSlider(int $val_min_slider): self
-    {
-        $this->val_min_slider = $val_min_slider;
-        return $this;
-    }
-    public function getValMaxSlider(): ?int
-    {
-        return $this->val_max_slider;
-    }
-    public function setValMaxSlider(int $val_max_slider): self
-    {
-        $this->val_max_slider = $val_max_slider;
         return $this;
     }
     /**

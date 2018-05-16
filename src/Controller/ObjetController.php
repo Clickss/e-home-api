@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Etage;
 use App\Entity\Maison;
+use App\Entity\Objet;
 use App\Entity\ObjetPiece;
 use App\Entity\Piece;
 use App\Entity\Utilisateur;
@@ -14,12 +15,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * @Route("/api/utilisateurs/{id_u}/maisons/{id_m}/etages/{id_e}/pieces/{id_p}/objets")
+ * @Route("/api/objets")
  */
 class ObjetController extends Controller
 {
     /**
      * @Route("", name="options_objet")
+     * @Route("/{id}", name="optionsid_objet")
      * @Method({"OPTIONS"})
      */
     public function optionsAction(Request $request)
@@ -33,37 +35,39 @@ class ObjetController extends Controller
     }
 
     /**
+     * @Route("", name="objet_add")
+     * @Method({"PUT"})
+     */
+    public function addAction(Request $request)
+    {
+        $data = $request->getContent();
+        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
+
+        var_dump($objetpiece->getObjet()->getId());
+
+        return new Response('', Response::HTTP_CREATED);
+    }
+
+    /**
      * @Route("/{id}", name="objet_show")
      * @Method({"GET"})
      */
     public function showAction(Request $request)
     {
-        $utilisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->find($request->get('id_u'));
-        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id_m'));
-        $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id_e'));
-        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
-        $objetPiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->findOneBy(["piece" => $request->get('id_p'), "objet" => $request->get('id')]);
+        $objet = $this->getDoctrine()->getRepository(Objet::class)->find($request->get('id'));
 
-        if (!$objetPiece) {
+        if (!$objet) {
             throw $this->createNotFoundException(
                 $response = new Response('', Response::HTTP_NOT_FOUND)
             );
         }
         else {
-            if($etage != $objetPiece->getPiece()->getEtage() || $maison != $objetPiece->getPiece()->getEtage()->getMaison() || $utilisateur != $piece->getEtage()->getMaison()->getUtilisateur())
-            {
-                throw $this->createNotFoundException(
-                    $response = new Response('', Response::HTTP_NOT_FOUND)
-                );
-            }
-            else {
-                $data = $this->get('jms_serializer')->serialize($objetPiece->getObjet(), 'json');
+            $data = $this->get('jms_serializer')->serialize($objet, 'json');
 
-                $response = new Response($data);
-                $response->headers->set('Content-Type', 'application/json');
-                $response->headers->set('Access-Control-Allow-Origin', '*');
-                $response->headers->set('Access-Control-Allow-Headers', '*');
-            }
+            $response = new Response($data);
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
         }
 
         return $response;
@@ -75,12 +79,7 @@ class ObjetController extends Controller
      */
     public function listAction(Request $request)
     {
-        $objetPieces = $this->getDoctrine()->getRepository("App:ObjetPiece")->findBy(["piece" => $request->get('id_p')]);
-
-        $objets = array();
-        foreach ($objetPieces as $objetPiece) {
-            array_push($objets, $objetPiece);
-        }
+        $objets = $this->getDoctrine()->getRepository("App:Objet")->findAll();
 
         $data = $this->get('jms_serializer')->serialize($objets, 'json');
 

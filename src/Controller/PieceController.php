@@ -28,6 +28,7 @@ class PieceController extends Controller
 {
     /**
      * @Route("", name="options_piece")
+     * @Route("/{id}", name="optionsid_piece")
      * @Method({"OPTIONS"})
      */
     public function optionsAction(Request $request)
