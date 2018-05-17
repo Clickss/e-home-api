@@ -34,6 +34,8 @@ class Objet
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\AttributObjet", inversedBy="objets")
      * @ORM\JoinColumn(nullable=false)
+     * 
+     * @Serializer\Expose
      */
     private $attribut_objet;
     /**

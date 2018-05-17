@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AttributObjetRepository")
+ * 
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class AttributObjet
 {
@@ -15,21 +18,29 @@ class AttributObjet
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Serializer\Expose
      */
     private $couleur;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Slider", inversedBy="attributObjets")
+     * 
+     * @Serializer\Expose
      */
     private $slider;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Etat", inversedBy="attributObjets")
+     * 
+     * @Serializer\Expose
      */
     private $etat;
 

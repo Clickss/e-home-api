@@ -3,8 +3,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\SliderRepository")
+ * 
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class Slider
 {
@@ -12,14 +16,20 @@ class Slider
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Expose
      */
     private $id;
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Serializer\Expose
      */
     private $lib_slider;
     /**
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Expose
      */
     private $min_slider;
     /**
@@ -28,6 +38,8 @@ class Slider
     private $max_slider;
     /**
      * @ORM\Column(type="string", length=10)
+     * 
+     * @Serializer\Expose
      */
     private $unite_slider;
 

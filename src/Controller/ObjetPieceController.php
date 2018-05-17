@@ -22,6 +22,7 @@ class ObjetPieceController extends Controller
 {
     /**
      * @Route("", name="options_objetpiece")
+     * @Route("/{id}", name="optionsid_objetpiece")
      * @Method({"OPTIONS"})
      */
     public function optionsAction(Request $request)
@@ -30,6 +31,7 @@ class ObjetPieceController extends Controller
 
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
@@ -70,7 +72,7 @@ class ObjetPieceController extends Controller
 
         $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
 
-        $response = new Response($data);
+        $response = new Response($data, Response::HTTP_CREATED);
         $response->headers->set('Content-Type', 'application/json');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Methods', '*');
@@ -104,11 +106,12 @@ class ObjetPieceController extends Controller
                 );
             }
             else {
-                $data = $this->get('jms_serializer')->serialize($objetPiece->getObjet(), 'json');
+                $data = $this->get('jms_serializer')->serialize($objetPiece, 'json');
 
-                $response = new Response($data);
+                $response = new Response($data, Response::HTTP_OK);
                 $response->headers->set('Content-Type', 'application/json');
                 $response->headers->set('Access-Control-Allow-Origin', '*');
+                $response->headers->set('Access-Control-Allow-Methods', '*');
                 $response->headers->set('Access-Control-Allow-Headers', '*');
             }
         }
@@ -120,13 +123,13 @@ class ObjetPieceController extends Controller
      * @Route("/{id}", name="objetpiece_delete")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request)
     {
-        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($id);
+        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($request->get('id'));
         
         if (!$objetpiece) {
             throw $this->createNotFoundException(sprintf(
-                'Piece inconnue'
+                'Objet inconnue'
             ));
         }
         else
@@ -136,7 +139,13 @@ class ObjetPieceController extends Controller
             $em->flush();
         }
 
-        return new Response(null, Response::HTTP_OK);
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+                
+        return $response;
     }
 
     /**
@@ -157,6 +166,7 @@ class ObjetPieceController extends Controller
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
 
         return $response;
