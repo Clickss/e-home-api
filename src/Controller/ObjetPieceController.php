@@ -44,7 +44,7 @@ class ObjetPieceController extends Controller
     {
         $data = $request->getContent();
         $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
-
+        
         $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
         $objet = $this->getDoctrine()->getRepository(Objet::class)->find($objetpiece->getObjet()->getId());
 
@@ -73,6 +73,33 @@ class ObjetPieceController extends Controller
         $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
 
         $response = new Response($data, Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
+    }
+    
+    /**
+     * @Route("/{id}", name="objetpiece_edit")
+     * @Method({"POST"})
+     */
+    public function editAction(Request $request)
+    {
+        $data = $request->getContent();
+        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
+        
+        $valeurs = $objetpiece->getValeursObjet();
+        $valeurs->setObjetPiece($objetpiece);
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($valeurs);
+        $em->flush();
+        
+        $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
+
+        $response = new Response($data, Response::HTTP_OK);
         $response->headers->set('Content-Type', 'application/json');
         $response->headers->set('Access-Control-Allow-Origin', '*');
         $response->headers->set('Access-Control-Allow-Methods', '*');

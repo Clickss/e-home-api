@@ -34,6 +34,8 @@ class Slider
     private $min_slider;
     /**
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Expose
      */
     private $max_slider;
     /**
