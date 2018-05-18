@@ -26,6 +26,8 @@ class ObjetPiece
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Piece", inversedBy="objetPieces")
      * @ORM\JoinColumn(nullable=false)
+     * 
+     * @Serializer\Expose
      */
     private $piece;
 
@@ -44,6 +46,8 @@ class ObjetPiece
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Programmation", mappedBy="objet_piece", orphanRemoval=true)
+     * 
+     * @Serializer\Expose
      */
     private $programmations;
 
