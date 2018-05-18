@@ -5,9 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation as Serializer;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AttributObjetRepository")
+ * 
+ * @Serializer\ExclusionPolicy("ALL")
  */
 class AttributObjet
 {
@@ -15,21 +18,29 @@ class AttributObjet
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * 
+     * @Serializer\Expose
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Serializer\Expose
      */
     private $couleur;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Slider", inversedBy="attributObjets")
+     * 
+     * @Serializer\Expose
      */
     private $slider;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Etat", inversedBy="attributObjets")
+     * 
+     * @Serializer\Expose
      */
     private $etat;
 
@@ -37,11 +48,6 @@ class AttributObjet
      * @ORM\OneToMany(targetEntity="App\Entity\Objet", mappedBy="attribut_objet", orphanRemoval=true)
      */
     private $objets;
-
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Programmation", mappedBy="attribut_objet", orphanRemoval=true)
-     */
-    private $programmations;
 
     public function __construct()
     {
@@ -115,37 +121,6 @@ class AttributObjet
             // set the owning side to null (unless already changed)
             if ($objet->getAttributObjet() === $this) {
                 $objet->setAttributObjet(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Programmation[]
-     */
-    public function getProgrammations(): Collection
-    {
-        return $this->programmations;
-    }
-
-    public function addProgrammation(Programmation $programmation): self
-    {
-        if (!$this->programmations->contains($programmation)) {
-            $this->programmations[] = $programmation;
-            $programmation->setAttributObjet($this);
-        }
-
-        return $this;
-    }
-
-    public function removeProgrammation(Programmation $programmation): self
-    {
-        if ($this->programmations->contains($programmation)) {
-            $this->programmations->removeElement($programmation);
-            // set the owning side to null (unless already changed)
-            if ($programmation->getAttributObjet() === $this) {
-                $programmation->setAttributObjet(null);
             }
         }
 

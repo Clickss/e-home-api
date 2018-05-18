@@ -16,13 +16,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 /**
- * @Route("/api/utilisateurs/{id_u}/maisons/{id_m}/etages/{id_e}/pieces/{id_p}/objets")
+ * @Route("/api/utilisateurs/{id_u}/maisons/{id_m}/etages/{id_e}/pieces/{id_p}/objets/{id_o}/programmations")
  */
-class ObjetPieceController extends Controller
+class ProgrammationController extends Controller
 {
     /**
-     * @Route("", name="options_objetpiece")
-     * @Route("/{id}", name="optionsid_objetpiece")
+     * @Route("", name="options_programmation")
+     * @Route("/{id}", name="optionsid_programmation")
      * @Method({"OPTIONS"})
      */
     public function optionsAction(Request $request)
@@ -37,7 +37,7 @@ class ObjetPieceController extends Controller
     }
 
     /**
-     * @Route("", name="objetpiece_add")
+     * @Route("", name="programmation_add")
      * @Method({"POST"})
      */
     public function addAction(Request $request)
@@ -82,34 +82,7 @@ class ObjetPieceController extends Controller
     }
     
     /**
-     * @Route("/{id}", name="objetpiece_edit")
-     * @Method({"POST"})
-     */
-    public function editAction(Request $request)
-    {
-        $data = $request->getContent();
-        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
-        
-        $valeurs = $objetpiece->getValeursObjet();
-        $valeurs->setObjetPiece($objetpiece);
-        
-        $em = $this->getDoctrine()->getManager();
-        $em->merge($valeurs);
-        $em->flush();
-        
-        $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
-
-        $response = new Response($data, Response::HTTP_OK);
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
-
-        return $response;
-    }
-
-    /**
-     * @Route("/{id}", name="objetpiece_show")
+     * @Route("/{id}", name="programmation_show")
      * @Method({"GET"})
      */
     public function showAction(Request $request)
@@ -147,7 +120,7 @@ class ObjetPieceController extends Controller
     }
     
     /**
-     * @Route("/{id}", name="objetpiece_delete")
+     * @Route("/{id}", name="programmation_delete")
      * @Method({"DELETE"})
      */
     public function deleteAction(Request $request)
@@ -176,19 +149,14 @@ class ObjetPieceController extends Controller
     }
 
     /**
-     * @Route("", name="objetpiece_list")
+     * @Route("", name="programmation_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
-        $objetPieces = $this->getDoctrine()->getRepository("App:ObjetPiece")->findBy(["piece" => $request->get('id_p')]);
+        $programmations = $this->getDoctrine()->getRepository("App:Programmation")->findBy(["objet_piece" => $request->get('id_o')]);
 
-        $objets = array();
-        foreach ($objetPieces as $objetPiece) {
-            array_push($objets, $objetPiece);
-        }
-
-        $data = $this->get('jms_serializer')->serialize($objets, 'json');
+        $data = $this->get('jms_serializer')->serialize($programmations, 'json');
 
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
