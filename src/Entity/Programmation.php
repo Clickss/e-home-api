@@ -82,4 +82,22 @@ class Programmation
         $this->objet_piece = $objet_piece;
         return $this;
     }
+    public function getValEtat(): ?boolean
+    {
+        return $this->heure;
+    }
+    public function setValEtat(boolean $val_etat): self
+    {
+        $this->val_etat = $val_etat;
+        return $this;
+    }
+    public function getValSlider(): ?string
+    {
+        return $this->val_slider;
+    }
+    public function setValSlider(string $val_slider): self
+    {
+        $this->val_slider = $val_slider;
+        return $this;
+    }
 }
