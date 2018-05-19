@@ -7,6 +7,7 @@ use App\Entity\Maison;
 use App\Entity\Objet;
 use App\Entity\ObjetPiece;
 use App\Entity\Piece;
+use App\Entity\Programmation;
 use App\Entity\Utilisateur;
 use App\Entity\ValeursObjet;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,34 +44,16 @@ class ProgrammationController extends Controller
     public function addAction(Request $request)
     {
         $data = $request->getContent();
-        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
-        
-        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
-        $objet = $this->getDoctrine()->getRepository(Objet::class)->find($objetpiece->getObjet()->getId());
+        $programmation = $this->get('jms_serializer')->deserialize($data, Programmation::class, 'json');
 
-        $objetpiece->setObjet($objet);
+        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($request->get('id_o'));
+        $programmation->setObjetPiece($objetpiece);
 
-        $objetpiece->setPiece($piece);
-
-        $valeurs_objet = new ValeursObjet();
-
-        if($objetpiece->getObjet()->getAttributObjet()->getSlider() != null)
-        {
-            $valeurs_objet->setValSlider(0);
-        }
-        if($objetpiece->getObjet()->getAttributObjet()->getEtat() != null)
-        {
-            $valeurs_objet->setValEtat(1);
-        }
         $em = $this->getDoctrine()->getManager();
-        $em->persist($valeurs_objet);
-        $objetpiece->setValeursObjet($valeurs_objet);
-
-
-        $em->persist($objetpiece);
+        $em->persist($programmation);
         $em->flush();
 
-        $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
+        $data = $this->get('jms_serializer')->serialize($programmation, 'json');
 
         $response = new Response($data, Response::HTTP_CREATED);
         $response->headers->set('Content-Type', 'application/json');
@@ -125,17 +108,17 @@ class ProgrammationController extends Controller
      */
     public function deleteAction(Request $request)
     {
-        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($request->get('id'));
+        $programmation = $this->getDoctrine()->getRepository(Programmation::class)->find($request->get('id'));
         
-        if (!$objetpiece) {
+        if (!$programmation) {
             throw $this->createNotFoundException(sprintf(
-                'Objet inconnue'
+                'Programmation inconnue'
             ));
         }
         else
         {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($objetpiece);
+            $em->remove($programmation);
             $em->flush();
         }
 
