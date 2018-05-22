@@ -37,6 +37,7 @@ class PieceController extends Controller
         
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
@@ -138,9 +139,9 @@ class PieceController extends Controller
      * @Route("/{id}", name="piece_delete")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction($request)
     {
-        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($id);
+        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id'));
 
         if (!$piece) {
             throw $this->createNotFoundException(sprintf(
@@ -154,7 +155,13 @@ class PieceController extends Controller
             $em->flush();
         }
 
-        return new Response(null, Response::HTTP_OK);
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
     }
 
     /**
