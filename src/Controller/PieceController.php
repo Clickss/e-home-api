@@ -139,13 +139,13 @@ class PieceController extends Controller
      * @Route("/{id}", name="piece_delete")
      * @Method({"DELETE"})
      */
-    public function deleteAction($request)
+    public function deleteAction(Request $request)
     {
         $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id'));
 
         if (!$piece) {
             throw $this->createNotFoundException(sprintf(
-                'Piece inconnue'
+                'Piece inconnue'.$request
             ));
         }
         else

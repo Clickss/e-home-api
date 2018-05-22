@@ -134,7 +134,7 @@ class EtageController extends Controller
      * @Route("/{id}", name="etage_delete")
      * @Method({"DELETE"})
      */
-    public function deleteAction($request)
+    public function deleteAction(Request $request)
     {
         $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id'));
 

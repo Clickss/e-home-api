@@ -101,9 +101,9 @@ class MaisonController extends Controller
      * @Route("/{id}", name="maison_delete")
      * @Method({"DELETE"})
      */
-    public function deleteAction($id)
+    public function deleteAction(Request $request)
     {
-        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($id);
+        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id'));
         if (!$maison) {
             throw $this->createNotFoundException(sprintf(
                 'Maison inconnue'
@@ -115,7 +115,14 @@ class MaisonController extends Controller
             $em->remove($maison);
             $em->flush();
         }
-        return new Response(null, Response::HTTP_OK);
+
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
     }
     /**
      * @Route("", name="maison_list")
