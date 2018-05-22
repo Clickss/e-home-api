@@ -112,7 +112,7 @@ class MaisonController extends Controller
      */
     public function deleteAction(Request $request)
     {
-        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id'));
+        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id'));        
         if (!$maison) {
             throw $this->createNotFoundException(sprintf(
                 'Maison inconnue'
