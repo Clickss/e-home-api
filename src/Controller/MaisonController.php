@@ -41,7 +41,16 @@ class MaisonController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($maison);
         $em->flush();
-        return new Response('', Response::HTTP_CREATED);
+
+        $data = $this->get('jms_serializer')->serialize($maison, 'json');
+
+        $response = new Response($data, Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
     }
     /**
      * @Route("/{id}", name="maison_show")
