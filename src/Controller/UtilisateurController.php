@@ -28,6 +28,7 @@ class UtilisateurController extends Controller
         
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
@@ -35,18 +36,37 @@ class UtilisateurController extends Controller
     
     /**
      * @Route("", name="utilisateur_add")
-     * @Method({"PUT"})
+     * @Method({"POST"})
      */
     public function addAction(Request $request)
     {
         $data = $request->getContent();
         $utilisateur = $this->get('jms_serializer')->deserialize($data, Utilisateur::class, 'json');
 
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($utilisateur);
-        $em->flush();
+        $if_exist = $this->getDoctrine()->getRepository(Utilisateur::class)->findBy(["mail" => $utilisateur->getMail()]);
 
-        return new Response('', Response::HTTP_CREATED);
+        if(count($if_exist) == 0)
+        {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($utilisateur);
+            $em->flush();
+
+            $response = new Response($data, Response::HTTP_CREATED);
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Methods', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+        }
+        else
+        {
+            $response = new Response('', Response::HTTP_NOT_ACCEPTABLE);
+            $response->headers->set('Content-Type', 'application/json');
+            $response->headers->set('Access-Control-Allow-Origin', '*');
+            $response->headers->set('Access-Control-Allow-Methods', '*');
+            $response->headers->set('Access-Control-Allow-Headers', '*');
+        }
+
+        return $response;
     }
 
     /**
