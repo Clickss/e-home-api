@@ -24,6 +24,7 @@ class MaisonController extends Controller
         
         $response->headers->set('Content-Type', 'text/plain');
         $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
         return $response;
     }
