@@ -24,13 +24,10 @@ class Ambiance
      */
     private $piece;
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\ObjetPiece", mappedBy="ambiances")
+     * @ORM\Column(type="text")
      */
-    private $objetPieces;
-    public function __construct()
-    {
-        $this->objetPieces = new ArrayCollection();
-    }
+    private $ambiance;
+    
     public function getId()
     {
         return $this->id;
@@ -53,27 +50,14 @@ class Ambiance
         $this->piece = $piece;
         return $this;
     }
-    /**
-     * @return Collection|ObjetPiece[]
-     */
-    public function getObjetPieces(): Collection
+    
+    public function getAmbiance(): ?string
     {
-        return $this->objetPieces;
+        return $this->ambiance;
     }
-    public function addObjetPiece(ObjetPiece $objetPiece): self
+    public function setAmbiance(string $ambiance): self
     {
-        if (!$this->objetPieces->contains($objetPiece)) {
-            $this->objetPieces[] = $objetPiece;
-            $objetPiece->addAmbiance($this);
-        }
-        return $this;
-    }
-    public function removeObjetPiece(ObjetPiece $objetPiece): self
-    {
-        if ($this->objetPieces->contains($objetPiece)) {
-            $this->objetPieces->removeElement($objetPiece);
-            $objetPiece->removeAmbiance($this);
-        }
+        $this->ambiance = $ambiance;
         return $this;
     }
 }

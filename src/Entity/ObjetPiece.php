@@ -40,11 +40,6 @@ class ObjetPiece
     private $objet;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Ambiance", inversedBy="objetPieces")
-     */
-    private $ambiances;
-
-    /**
      * @ORM\OneToMany(targetEntity="App\Entity\Programmation", mappedBy="objet_piece", orphanRemoval=true)
      * 
      * @Serializer\Expose
@@ -89,32 +84,6 @@ class ObjetPiece
     public function setObjet(?Objet $objet): self
     {
         $this->objet = $objet;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Ambiance[]
-     */
-    public function getAmbiances(): Collection
-    {
-        return $this->ambiances;
-    }
-
-    public function addAmbiance(Ambiance $ambiance): self
-    {
-        if (!$this->ambiances->contains($ambiance)) {
-            $this->ambiances[] = $ambiance;
-        }
-
-        return $this;
-    }
-
-    public function removeAmbiance(Ambiance $ambiance): self
-    {
-        if ($this->ambiances->contains($ambiance)) {
-            $this->ambiances->removeElement($ambiance);
-        }
 
         return $this;
     }

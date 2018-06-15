@@ -1,0 +1,183 @@
+<?php
+
+namespace App\Controller;
+
+use App\Entity\Etage;
+use App\Entity\Maison;
+use App\Entity\Ambiance;
+use App\Entity\ObjetPiece;
+use App\Entity\Piece;
+use App\Entity\Utilisateur;
+use App\Entity\ValeursObjet;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+
+/**
+ * @Route("/api/utilisateurs/{id_u}/maisons/{id_m}/etages/{id_e}/pieces/{id_p}/ambiances")
+ */
+class AmbianceController extends Controller
+{
+    /**
+     * @Route("", name="options_ambiance")
+     * @Route("/{id}", name="optionsid_ambiance")
+     * @Method({"OPTIONS"})
+     */
+    public function optionsAction(Request $request)
+    {
+        $response = new Response(json_encode("Ok"), Response::HTTP_OK);
+
+        $response->headers->set('Content-Type', 'text/plain');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+        return $response;
+    }
+
+    /**
+     * @Route("", name="ambiance_add")
+     * @Method({"POST"})
+     */
+    public function addAction(Request $request)
+    {
+        $data = $request->getContent();
+        $ambiance = $this->get('jms_serializer')->deserialize($data, Ambiance::class, 'json');
+        
+        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
+        $ambiance->setPiece($piece);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($ambiance);
+        $em->flush();
+
+        $data = $this->get('jms_serializer')->serialize($ambiance, 'json');
+
+        $response = new Response($data, Response::HTTP_CREATED);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
+    }
+    
+    /**
+     * @Route("/{id}", name="objetpiece_edit")
+     * @Method({"POST"})
+     */
+    public function editAction(Request $request)
+    {
+        $data = $request->getContent();
+        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
+        
+        $valeurs = $objetpiece->getValeursObjet();
+        $valeurs->setObjetPiece($objetpiece);
+        
+        $em = $this->getDoctrine()->getManager();
+        $em->merge($valeurs);
+        $em->flush();
+        
+        $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
+
+        $response = new Response($data, Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
+    }
+
+    /**
+     * @Route("/{id}", name="objetpiece_show")
+     * @Method({"GET"})
+     */
+    public function showAction(Request $request)
+    {
+        $utilisateur = $this->getDoctrine()->getRepository(Utilisateur::class)->find($request->get('id_u'));
+        $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id_m'));
+        $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id_e'));
+        $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
+        $objetPiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->findOneBy(["piece" => $request->get('id_p'), "objet" => $request->get('id')]);
+
+        if (!$objetPiece) {
+            throw $this->createNotFoundException(
+                $response = new Response('', Response::HTTP_NOT_FOUND)
+            );
+        }
+        else {
+            if($etage != $objetPiece->getPiece()->getEtage() || $maison != $objetPiece->getPiece()->getEtage()->getMaison() || $utilisateur != $piece->getEtage()->getMaison()->getUtilisateur())
+            {
+                throw $this->createNotFoundException(
+                    $response = new Response('', Response::HTTP_NOT_FOUND)
+                );
+            }
+            else {
+                $data = $this->get('jms_serializer')->serialize($objetPiece, 'json');
+
+                $response = new Response($data, Response::HTTP_OK);
+                $response->headers->set('Content-Type', 'application/json');
+                $response->headers->set('Access-Control-Allow-Origin', '*');
+                $response->headers->set('Access-Control-Allow-Methods', '*');
+                $response->headers->set('Access-Control-Allow-Headers', '*');
+            }
+        }
+
+        return $response;
+    }
+    
+    /**
+     * @Route("/{id}", name="objetpiece_delete")
+     * @Method({"DELETE"})
+     */
+    public function deleteAction(Request $request)
+    {
+        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($request->get('id'));
+        
+        if (!$objetpiece) {
+            throw $this->createNotFoundException(sprintf(
+                'Objet inconnue'
+            ));
+        }
+        else
+        {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($objetpiece);
+            $em->flush();
+        }
+
+        $response = new Response(null, Response::HTTP_OK);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+                
+        return $response;
+    }
+
+    /**
+     * @Route("", name="objetpiece_list")
+     * @Method({"GET"})
+     */
+    public function listAction(Request $request)
+    {
+        $objetPieces = $this->getDoctrine()->getRepository("App:ObjetPiece")->findBy(["piece" => $request->get('id_p')]);
+
+        $objets = array();
+        foreach ($objetPieces as $objetPiece) {
+            array_push($objets, $objetPiece);
+        }
+
+        $data = $this->get('jms_serializer')->serialize($objets, 'json');
+
+        $response = new Response($data);
+        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Access-Control-Allow-Origin', '*');
+        $response->headers->set('Access-Control-Allow-Methods', '*');
+        $response->headers->set('Access-Control-Allow-Headers', '*');
+
+        return $response;
+    }
+}
