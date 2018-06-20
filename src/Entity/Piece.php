@@ -32,6 +32,8 @@ class Piece
     private $etage;
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Ambiance", mappedBy="piece", orphanRemoval=true)
+     * 
+     * @Serializer\Expose
      */
     private $ambiances;
     /**
