@@ -15,8 +15,8 @@ class AmbianceType extends AbstractType
     {
         $builder
             ->add('nom', TextType::class, array("required" => true))
-            ->add('piece')
-            ->add('objetPieces')
+
+            ->add('ambiance')
             ->add('save', SubmitType::class)
         ;
     }

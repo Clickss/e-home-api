@@ -9,6 +9,7 @@ use App\Entity\ObjetPiece;
 use App\Entity\Piece;
 use App\Entity\Utilisateur;
 use App\Entity\ValeursObjet;
+use App\Form\AmbianceType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -64,34 +65,39 @@ class AmbianceController extends Controller
     }
     
     /**
-     * @Route("/{id}", name="objetpiece_edit")
+     * @Route("/{id}", name="ambiance_edit")
      * @Method({"POST"})
      */
     public function editAction(Request $request)
     {
-        $data = $request->getContent();
-        $objetpiece = $this->get('jms_serializer')->deserialize($data, ObjetPiece::class, 'json');
-        
-        $valeurs = $objetpiece->getValeursObjet();
-        $valeurs->setObjetPiece($objetpiece);
-        
-        $em = $this->getDoctrine()->getManager();
-        $em->merge($valeurs);
-        $em->flush();
-        
-        $data = $this->get('jms_serializer')->serialize($objetpiece, 'json');
+        $ambiance = $this->getDoctrine()->getManager()->getRepository(Ambiance::class)->find($request->get('id'));
 
-        $response = new Response($data, Response::HTTP_OK);
-        $response->headers->set('Content-Type', 'application/json');
-        $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', '*');
-        $response->headers->set('Access-Control-Allow-Headers', '*');
+        if (!$ambiance) {
+            throw $this->createNotFoundException(
+                $response = new Response('', Response::HTTP_NOT_FOUND)
+            );
+        }
 
-        return $response;
+        $data = $this->get('jms_serializer')->deserialize($request->getContent(), Ambiance::class, 'json');
+
+        $form = $this->createForm(AmbianceType::class, $ambiance);
+        $form->submit(array(
+            "nom" => $data->getNom(),
+            "ambiance" => $data->getAmbiance()
+        ));
+
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->flush();
+
+            return new Response(null, Response::HTTP_OK);
+        } else {
+            return new Response(null, Response::HTTP_NOT_MODIFIED);
+        }
     }
 
     /**
-     * @Route("/{id}", name="objetpiece_show")
+     * @Route("/{id}", name="ambiance_show")
      * @Method({"GET"})
      */
     public function showAction(Request $request)
@@ -100,22 +106,22 @@ class AmbianceController extends Controller
         $maison = $this->getDoctrine()->getRepository(Maison::class)->find($request->get('id_m'));
         $etage = $this->getDoctrine()->getRepository(Etage::class)->find($request->get('id_e'));
         $piece = $this->getDoctrine()->getRepository(Piece::class)->find($request->get('id_p'));
-        $objetPiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->findOneBy(["piece" => $request->get('id_p'), "objet" => $request->get('id')]);
+        $ambiance = $this->getDoctrine()->getRepository(Ambiance::class)->find($request->get('id'));
 
-        if (!$objetPiece) {
+        if (!$ambiance) {
             throw $this->createNotFoundException(
                 $response = new Response('', Response::HTTP_NOT_FOUND)
             );
         }
         else {
-            if($etage != $objetPiece->getPiece()->getEtage() || $maison != $objetPiece->getPiece()->getEtage()->getMaison() || $utilisateur != $piece->getEtage()->getMaison()->getUtilisateur())
+            if($etage != $ambiance->getPiece()->getEtage() || $maison != $ambiance->getPiece()->getEtage()->getMaison() || $utilisateur != $piece->getEtage()->getMaison()->getUtilisateur())
             {
                 throw $this->createNotFoundException(
                     $response = new Response('', Response::HTTP_NOT_FOUND)
                 );
             }
             else {
-                $data = $this->get('jms_serializer')->serialize($objetPiece, 'json');
+                $data = $this->get('jms_serializer')->serialize($ambiance, 'json');
 
                 $response = new Response($data, Response::HTTP_OK);
                 $response->headers->set('Content-Type', 'application/json');
@@ -129,22 +135,22 @@ class AmbianceController extends Controller
     }
     
     /**
-     * @Route("/{id}", name="objetpiece_delete")
+     * @Route("/{id}", name="ambiance_delete")
      * @Method({"DELETE"})
      */
     public function deleteAction(Request $request)
     {
-        $objetpiece = $this->getDoctrine()->getRepository(ObjetPiece::class)->find($request->get('id'));
+        $ambiance = $this->getDoctrine()->getRepository(Ambiance::class)->find($request->get('id'));
         
-        if (!$objetpiece) {
+        if (!$ambiance) {
             throw $this->createNotFoundException(sprintf(
-                'Objet inconnue'
+                'Ambiance inconnue'
             ));
         }
         else
         {
             $em = $this->getDoctrine()->getManager();
-            $em->remove($objetpiece);
+            $em->remove($ambiance);
             $em->flush();
         }
 
@@ -158,24 +164,18 @@ class AmbianceController extends Controller
     }
 
     /**
-     * @Route("", name="objetpiece_list")
+     * @Route("", name="ambiance_list")
      * @Method({"GET"})
      */
     public function listAction(Request $request)
     {
-        $objetPieces = $this->getDoctrine()->getRepository("App:ObjetPiece")->findBy(["piece" => $request->get('id_p')]);
+        $ambiances = $this->getDoctrine()->getRepository("App:Ambiance")->findBy(["piece" => $request->get('id_p')]);
 
-        $objets = array();
-        foreach ($objetPieces as $objetPiece) {
-            array_push($objets, $objetPiece);
-        }
-
-        $data = $this->get('jms_serializer')->serialize($objets, 'json');
+        $data = $this->get('jms_serializer')->serialize($ambiances, 'json');
 
         $response = new Response($data);
         $response->headers->set('Content-Type', 'application/json');
         $response->headers->set('Access-Control-Allow-Origin', '*');
-        $response->headers->set('Access-Control-Allow-Methods', '*');
         $response->headers->set('Access-Control-Allow-Headers', '*');
 
         return $response;
